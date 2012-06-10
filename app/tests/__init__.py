@@ -3,11 +3,6 @@ import sys
 import inspect
 import unittest
 
-testmodules = [
-    'test.api.views',
-    ]
-
-
 def suite():
     suite = unittest.TestSuite()
     root = os.getcwd()

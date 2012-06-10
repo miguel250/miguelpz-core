@@ -2,7 +2,7 @@ language: python
 python:
   - "2.7"
 env:
- - PYTHONPATH=app/
+ - PYTHONPATH='.'
 before_install:
     sudo apt-get install -y libevent-dev python-gevent
 install:
