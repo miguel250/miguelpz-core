@@ -1,7 +1,7 @@
 import os
 import unittest
 import tempfile
-from app.api.models import User
+from app.core.models import User
 
 class ViewsTestCase(unittest.TestCase):
 	def setUp(self):

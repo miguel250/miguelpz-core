@@ -1,5 +1,5 @@
 from flask import Blueprint, Response, jsonify, request, session
-from models import User
+from app.core.models import User
 
 main = Blueprint('api', __name__)
 
