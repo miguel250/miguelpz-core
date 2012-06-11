@@ -1,5 +1,5 @@
 from app.api import views
 
 prints = {
-	views.main : '/api',
-}	
+    views.main : '/api',
+}   
