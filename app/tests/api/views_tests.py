@@ -1,19 +1,53 @@
 import os
 import unittest
 import tempfile
+import json
+from app.config.run import app
 from app.core.models import User
 
 class ViewsTestCase(unittest.TestCase):
 	def setUp(self):
-		User.job = 'Test Job'
-		User.city = 'Test City'
-		User.name = 'Test Name'
-		User.github = 'Test github'
-		User.twitter = 'Test twitter'
-		User.linkedin = 'Test linkedin'  
-		User.facebook = 'Test facebook'
-		User.googleplus = 'Test googleplus'
-		User.foursquare = 'Test foursquare'
-		User.personal_web = 'Test personal web'
+		self.app = app.test_client()
+		user = User(
+			username = 'Test username',
+			email = 'Test email',
+			job = 'Test Job',
+			city = 'Test City',
+			name = 'Test Name',
+			github = 'Test github',
+			twitter = 'Test twitter',
+			linkedin = 'Test linkedin',
+			facebook = 'Test facebook',
+			googleplus = 'Test googleplus',
+			foursquare = 'Test foursquare',
+			personal_web =  'Test personal web'
+			)
+		user = user.save()
+		self.id = user.id
+
 	def testMe(self):
-		self.assertEquals(User.job, 'Test Job')
+		user ={
+			'status': 200,
+        	'info': {
+            	'job': 'Test Job',
+            	'name': 'Test Name',
+            	'city': 'Test City',
+            	'pesonal_website': 'Test personal web'
+        	},
+        	'social' : {
+            	'github': 'Test github',
+            	'twitter': 'Test twitter',
+            	'linkedin': 'Test linkedin',
+            	'facebook': 'Test facebook',
+            	'googleplus': 'Test googleplus',
+            	'foursquare': 'Test foursquare',
+            	'personal_web': 'Test personal web'
+        	},
+    	}
+		rv = self.app.get('/api/me/%s'%self.id)
+		data = json.loads(rv.data)
+		self.assertEquals(data, user)
+
+	def testError(self):
+		rv = self.app.get('/api/m')
+		self.assertEquals(rv.status_code, 404)

@@ -3,24 +3,25 @@ from app.core.models import User
 
 main = Blueprint('api', __name__)
 
-@main.route('/me/')
-def index():
+@main.route('/me/<username_id>')
+def index(username_id):
+    user = User.objects.get_or_404(id=username_id)
     message = {
         'status': 200,
          'info': {
-            'job': User.job,
-            'name': User.name,
-            'city': User.city,
-            'pesonal_website': User.personal_web
+            'job': user.job,
+            'name': user.name,
+            'city': user.city,
+            'pesonal_website': user.personal_web
         },
         'social' : {
-            'github': User.github,
-            'twitter': User.twitter,
-            'linkedin': User.linkedin,
-            'facebook': User.facebook,
-            'googleplus': User.googleplus,
-            'foursquare': User.foursquare,
-            'personal_web': User.personal_web,
+            'github': user.github,
+            'twitter': user.twitter,
+            'linkedin': user.linkedin,
+            'facebook': user.facebook,
+            'googleplus': user.googleplus,
+            'foursquare': user.foursquare,
+            'personal_web': user.personal_web,
         },
     }
     resp = jsonify(message)
