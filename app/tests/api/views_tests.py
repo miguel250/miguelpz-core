@@ -24,6 +24,9 @@ class ViewsTestCase(unittest.TestCase):
 			)
 		user = user.save()
 		self.id = user.id
+	
+	def tearDown(self):
+		User.drop_collection()
 
 	def testMe(self):
 		user ={
