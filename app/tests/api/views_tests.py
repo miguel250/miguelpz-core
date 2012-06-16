@@ -1,6 +1,5 @@
 import os
 import unittest
-import tempfile
 import json
 from app.config.run import app
 from app.core.models import User
