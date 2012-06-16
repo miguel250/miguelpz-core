@@ -8,11 +8,10 @@ class Settings(object):
    
     def __init__(self):
         app = Flask(__name__)
-        path = os.path.join("../../config/development.cfg")
+        path = os.path.join("../../config/base.cfg")
         app.config.from_pyfile(path)
         self.app = app
     
-
     def environment(self):
         try:
             root = os.getcwd()
@@ -28,6 +27,9 @@ class Settings(object):
                 self.app.config.from_pyfile(path)
         except KeyError:
             pass
+
+    def config(self):
+        return self.app.config
 
     def db(self):
         self.environment()
