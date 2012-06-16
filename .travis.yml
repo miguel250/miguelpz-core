@@ -5,6 +5,7 @@ env:
  - PYTHONPATH='.'
 before_install:
     sudo apt-get install -y libevent-dev python-gevent
+install:
     pip install -r requirements.txt --use-mirrors
 script:
     python bin/run-test.py 
