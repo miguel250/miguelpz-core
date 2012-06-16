@@ -2,3 +2,4 @@ Flask==0.8
 https://github.com/sbook/flask-mongoengine/tarball/master
 gevent==0.13.7
 gunicorn==0.14.3
+mock==0.8.0
