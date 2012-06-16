@@ -36,4 +36,6 @@ class Settings(object):
         db = MongoEngine(self.app)
         return db
 
-db = Settings().db()
+settings = Settings()
+db = settings.db()
+config = settings.config()
