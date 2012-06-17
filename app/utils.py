@@ -2,10 +2,54 @@ import json
 import requests
 from uuid import uuid4
 from config import config
+from functools import wraps
 from datetime import datetime
 from collections import MutableMapping
 from app.core.models import Session as Storage
+from flask import session, url_for, flash, redirect, request, abort
 from flask.sessions import SessionInterface, SessionMixin
+
+
+
+class UserAuth(object):
+    
+    def __init__(self, login_url=None):
+        self.session = session
+        self.login_url = login_url
+
+    def is_authenticated(self):
+        if self.session.get('user_id'):
+            return True
+        return False
+
+    def is_anonymous(self):
+        if self.session.get('user_id'):
+            return False
+        return True
+    
+    def get_id(self):
+        return self.session.get('user_id')
+    
+    def get_auth_type(self):
+        return self.session.get('auth_type')
+
+    def unauthorized(self):
+        flash('You most login to see this page')
+        
+        if self.login_url:
+            login = url_for(self.login_url)
+            session['requre_url'] = request.url
+            return redirect(login)
+        return abort(401)
+
+    def login_required(self,fn):
+        @wraps(fn)
+        def decorated_view(*args, **kwargs):
+            if not self.is_authenticated():
+                return self.unauthorized()
+            return fn(*args, **kwargs)
+        return decorated_view
+  
 
 class MongoSession(MutableMapping, SessionMixin):
 

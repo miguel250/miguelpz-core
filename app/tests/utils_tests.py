@@ -2,9 +2,66 @@ import flask
 import unittest
 import requests
 from mock import patch
-from app.utils import Github
 from app.core.models import Session
-from app.utils import MongoSessionInterface
+from app.utils import Github, MongoSessionInterface, UserAuth
+
+class UserAuthTestCase(unittest.TestCase):
+	
+	def setUp(self):
+		self.user_auth = UserAuth()
+
+	def tearDown(self):
+		Session.drop_collection()
+
+	def testIsAuthenticated(self):
+		app = flask.Flask(__name__)
+		app.session_interface = MongoSessionInterface()
+		with app.test_request_context():
+			flask.session['user_id'] = 'test_id'
+			self.assertTrue(self.user_auth.is_authenticated())
+			flask.session.pop('user_id', None)
+			self.assertFalse(self.user_auth.is_authenticated())
+	def testIsAnonymous(self):
+		app = flask.Flask(__name__)
+		app.session_interface = MongoSessionInterface()
+		with app.test_request_context():
+			flask.session['user_id'] = 'test_id'
+			self.assertFalse(self.user_auth.is_anonymous())
+			flask.session.pop('user_id', None)
+			self.assertTrue(self.user_auth.is_anonymous())
+
+	def testLoginRequiredURL(self):
+		app = flask.Flask(__name__)
+		app.debug = True
+		app.session_interface = MongoSessionInterface()
+
+		user_auth_1 = UserAuth('.login')
+		@app.route('/login/')
+		def login():
+			messages = flask.get_flashed_messages()
+			return messages[0]
+		c = app.test_client()
+
+		@app.route('/admin/')
+		@user_auth_1.login_required
+		def get():
+			return 'secret'
+		assert 'secret' not in c.get('/admin/').data
+		self.assertEquals(c.get('/admin/',  follow_redirects=True).data, 'You most login to see this page')
+
+	def testLoginRequireNone(self):
+		app = flask.Flask(__name__)
+		app.debug = True
+		app.session_interface = MongoSessionInterface()
+
+		user_auth = self.user_auth
+
+		@app.route('/admin/')
+		@user_auth.login_required
+		def get():
+			return 'secret'
+		c = app.test_client()
+		assert 'secret' not in c.get('/admin/').data
 
 class MongoSessionTestCase(unittest.TestCase):
 
