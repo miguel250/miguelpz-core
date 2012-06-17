@@ -4,7 +4,7 @@ from app.core.models import User
 main = Blueprint('api', __name__)
 
 @main.route('/me/<username_id>')
-def index(username_id):
+def me(username_id):
     user = User.objects.get_or_404(id=username_id)
     message = {
         'status': 200,
