@@ -2,6 +2,22 @@ import os
 import unittest
 import tempfile
 from app.core.models import User
+from app.core.models import Session
+
+class SessionTestCase(unittest.TestCase):
+	
+	def setUp(self):
+		session = Session(session_id='test_id', data={'_flash':[['message', 'Invalid error']]})
+		session.save()
+		self.id = session.id
+		self.session = Session
+
+	def testSessionId(self):
+		session = self.session.objects(id=self.id).first()
+		self.assertEquals(session.session_id, 'test_id')
+
+	def tearDown(self):
+		Session.drop_collection()
 
 class UserTestCase(unittest.TestCase):
 	def setUp(self):

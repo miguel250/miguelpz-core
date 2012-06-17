@@ -1,7 +1,61 @@
+import flask
 import unittest
 import requests
-from app.utils import Github
 from mock import patch
+from app.utils import Github
+from app.core.models import Session
+from app.utils import MongoSessionInterface
+
+class MongoSessionTestCase(unittest.TestCase):
+
+	def tearDown(self):
+		Session.drop_collection()
+
+	def testMongoDataCreate(self):
+		app = flask.Flask(__name__)
+		app.session_interface = MongoSessionInterface()
+		with app.test_request_context():
+			id = flask.session.sid
+			flask.session['test_data'] = 'test'
+			session = Session.objects(session_id=id).first()
+			self.assertEquals(flask.session['test_data'], session.data['test_data'])
+	
+	def testMongoDataDelete(self):
+		app = flask.Flask(__name__)
+		app.session_interface = MongoSessionInterface()
+		with app.test_request_context():
+			id = flask.session.sid
+			flask.session['test_data'] = 'test'
+			flask.session.pop('test_data', None)
+			session = Session.objects(session_id=id).first()
+			self.assertEquals(flask.session.get('test_data'), session.data.get('test_data'))
+
+	def testCreateSession(self):
+		app = flask.Flask(__name__)
+		app.session_interface = MongoSessionInterface()
+
+		@app.route('/create/session')
+		def get():
+			flask.session['value'] = 'test_session'
+			return flask.session['value']
+		c = app.test_client()
+		self.assertEquals(c.get('/create/session').data, 'test_session')
+
+	def testDeleteSession(self):
+		app = flask.Flask(__name__)
+		app.session_interface = MongoSessionInterface()
+
+		def expect_exception(f, *args, **kwargs):
+			try:
+				f(*args, **kwargs)
+			except KeyError, e:
+				self.assert_(e.args and 'Key not in this session' in e.args[0])
+			else:
+				self.assert_(False, 'expected exception')
+
+		with app.test_request_context():
+			self.assertEquals(flask.session.get('missing_key'), None)
+			expect_exception(flask.session.pop, 'foo')
 
 class GitHubTestCase(unittest.TestCase):
 	

@@ -1,5 +1,6 @@
 import urls
 from app.config import Settings
+from app.utils import MongoSessionInterface
 
 class Run(Settings):
     
@@ -18,3 +19,4 @@ class Run(Settings):
 
 run = Run()
 app = run.application()
+app.session_interface = MongoSessionInterface()

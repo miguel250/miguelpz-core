@@ -1,3 +1,4 @@
+import datetime
 from app.config import db
 
 class User(db.Document):
@@ -14,3 +15,12 @@ class User(db.Document):
     googleplus =    db.StringField(required=True)
     foursquare =    db.StringField(required=True)
     personal_web =  db.StringField(required=True)
+
+class Session(db.Document):
+    session_id = db.StringField()
+    data = db.DictField()
+    expires_on = db.DateTimeField()
+
+    meta = {
+        'indexes': ['session_id']
+    }
