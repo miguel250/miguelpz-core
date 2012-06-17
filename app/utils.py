@@ -1,7 +1,6 @@
 import requests
 import json
 from config import config
-from urlparse import urlparse
 
 
 class Github(object):
