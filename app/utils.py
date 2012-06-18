@@ -156,6 +156,7 @@ class MongoSessionInterface(SessionInterface):
 class Github(object):
     """Github api wrapper"""
 
+    API_END = 'https://api.github.com'
     AUTH_ENDPOINT = 'https://github.com/login/oauth/access_token'
     HEADERS = {'content-type':'application/json'}
 
@@ -163,6 +164,20 @@ class Github(object):
         self.req = requests
         self.secret = config['GITHUB_SECRET']
         self.client_id = config['GITHUB_CLIENTID']
+
+    def get_limit(self):
+        url = '%s/rate_limit'%(self.API_END)
+        response = requests.get(url, headers=self.HEADERS)
+
+        return response.json
+
+    def get_user_info(self, token):
+        headers = self.HEADERS
+        headers['Authorization'] = 'token %s'%token
+        url = '%s/user'%(self.API_END)
+        response = requests.get(url, headers=headers)
+
+        return response.json
 
     def access_token(self, code):
        """Get user access token from github """

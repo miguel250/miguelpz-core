@@ -1,3 +1,4 @@
+import json
 import flask
 import unittest
 import requests
@@ -132,6 +133,21 @@ class GitHubTestCase(unittest.TestCase):
 
 	def testSecret(self):
 		self.assertEquals(self.secret, 'test_secret')
+	@patch('requests.get')
+	def testLimit(self, MockGet):
+		response = '{"rate": {"remaining": 4999,"limit": 5000}}'
+		mock = MockGet()
+		mock.json = json.loads(response)
+
+		self.assertEquals(self.github.get_limit(), json.loads(response))
+
+	@patch('requests.get')
+	def testUserInfo(self, MockGet):
+		user_information = '{"login": "octocat","id": 1,"avatar_url": "https://github.com/images/error/octocat_happy.gif"}'
+		mock = MockGet()
+		mock.json = json.loads(user_information)
+
+		self.assertEquals(self.github.get_user_info('test_tome'), json.loads(user_information))
 
 	@patch('requests.post')
 	def testAccessToken(self, MockPost):
