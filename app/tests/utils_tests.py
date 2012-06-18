@@ -14,6 +14,33 @@ class UserAuthTestCase(unittest.TestCase):
 	def tearDown(self):
 		Session.drop_collection()
 
+	@patch.object(Github, 'get_email')
+	@patch('requests.get')
+	def testCheckOrCreate(self, MockGet, MockEmail):
+		app = flask.Flask(__name__)
+		app.session_interface = MongoSessionInterface()
+		with app.test_request_context():
+			user_information = '{"gravatar_id": "gravatar_id","login": "octocat","id": 1,"html_url": "test_html_url","name":"name_test","location": "test_location"}'
+			mock = MockGet()
+			mock.json = json.loads(user_information)
+			MockEmail.return_value = ['test@test']
+			self.assertTrue(self.user_auth.check_or_create('test_token', 'github'))
+			self.assertFalse(self.user_auth.check_or_create(None, None))
+
+	def testCreateAuthSession(self):
+		app = flask.Flask(__name__)
+		app.session_interface = MongoSessionInterface()
+		with app.test_request_context():
+			user_id = 'test_id'
+			token = 'test_token'
+			auth_type = 'test_type'
+
+			self.user_auth.create_auth_session(user_id, token, auth_type)
+			self.assertEquals(flask.session['user_id'], user_id)
+			self.assertEquals(flask.session['token'], token)
+			self.assertEquals(flask.session['auth_type'], auth_type)
+			self.assertFalse(self.user_auth.create_auth_session(None, token, auth_type))
+
 	def testIsAuthenticated(self):
 		app = flask.Flask(__name__)
 		app.session_interface = MongoSessionInterface()

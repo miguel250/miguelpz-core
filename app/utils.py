@@ -5,7 +5,7 @@ from config import config
 from functools import wraps
 from datetime import datetime
 from collections import MutableMapping
-from app.core.models import Session as Storage
+from app.core.models import Session as Storage, User
 from flask import session, url_for, flash, redirect, request, abort
 from flask.sessions import SessionInterface, SessionMixin
 
@@ -16,6 +16,39 @@ class UserAuth(object):
     def __init__(self, login_url=None):
         self.session = session
         self.login_url = login_url
+
+    def check_or_create(self, token, auth_type):
+        if auth_type == 'github':
+            github = Github()
+            user_info = github.get_user_info(token)
+            user = User.objects(github_id=user_info['id']).first()
+            
+            if not user:
+                user = User()
+                email_github = github.get_email(token)
+                
+                user.token_github = token
+                user.github = user_info['html_url']
+                user.email = email_github[0]
+                user.name = user_info['name']
+                user.username = user_info['login']
+                user.city     = user_info['location']
+                user.gravatar_id = user_info['gravatar_id']
+                user.github_id =user_info['id']
+
+                user.save()
+                self.create_auth_session(user.id, token, auth_type)
+
+            return self.create_auth_session(user.id, token, auth_type)
+        else:
+            return False
+
+    def create_auth_session(self, user_id, token, auth_type):
+        session['user_id'] = user_id
+        session['token'] = token
+        session['auth_type'] = auth_type
+
+        return self.is_authenticated()
 
     def is_authenticated(self):
         if self.session.get('user_id'):
