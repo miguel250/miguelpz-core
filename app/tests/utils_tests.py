@@ -133,6 +133,15 @@ class GitHubTestCase(unittest.TestCase):
 
 	def testSecret(self):
 		self.assertEquals(self.secret, 'test_secret')
+	
+	@patch('requests.get')
+	def testEmail(self, MockGet):
+		response = '["octocat@github.com","support@github.com"]'
+		mock = MockGet()
+		mock.json = json.loads(response)
+
+		self.assertEquals(self.github.get_limit(), json.loads(response))	
+	
 	@patch('requests.get')
 	def testLimit(self, MockGet):
 		response = '{"rate": {"remaining": 4999,"limit": 5000}}'

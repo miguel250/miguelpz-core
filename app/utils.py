@@ -164,6 +164,14 @@ class Github(object):
         self.req = requests
         self.secret = config['GITHUB_SECRET']
         self.client_id = config['GITHUB_CLIENTID']
+    
+    def get_email(self, token):
+        headers = self.HEADERS
+        headers['Authorization'] = 'token %s'%token
+        url = '%s/user/emails'%(self.API_END)
+        response = requests.get(url, headers=headers)
+
+        return response.json
 
     def get_limit(self):
         url = '%s/rate_limit'%(self.API_END)
