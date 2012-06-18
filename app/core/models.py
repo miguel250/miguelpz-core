@@ -3,18 +3,21 @@ from app.config import db
 
 class User(db.Document):
     """User model"""
-    username =      db.StringField(required=True)
-    email =         db.StringField(required=True)
-    job =           db.StringField(required=True)
-    city =          db.StringField(required=True)
-    name =          db.StringField(required=True)
-    github =        db.StringField(required=True)
-    twitter =       db.StringField(required=True)
-    linkedin =      db.StringField(required=True)
-    facebook =      db.StringField(required=True)
-    googleplus =    db.StringField(required=True)
-    foursquare =    db.StringField(required=True)
-    personal_web =  db.StringField(required=True)
+    username =      db.StringField()
+    email =         db.StringField()
+    job =           db.StringField()
+    city =          db.StringField()
+    name =          db.StringField()
+    github =        db.StringField()
+    twitter =       db.StringField()
+    linkedin =      db.StringField()
+    facebook =      db.StringField()
+    github_id =     db.IntField()
+    googleplus =    db.StringField()
+    foursquare =    db.StringField()
+    gravatar_id =    db.StringField()
+    personal_web =  db.StringField()
+    token_github =  db.StringField()
 
 class Session(db.Document):
     session_id = db.StringField()
