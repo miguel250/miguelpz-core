@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from datetime import timedelta
-from flaskext.mongoengine import MongoEngine
+from flask.ext.mongoengine import MongoEngine
 
 
 class Settings(object):
