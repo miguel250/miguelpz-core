@@ -41,7 +41,11 @@ def auth_callback():
             return redirect(login_url, code=307)
         elif 'access_token' in token:
             if user_auth.check_or_create(token['access_token'], type_auth):
-                return redirect(login_url, code=307)
+                next = session.get('requre_url')
+                session.pop('requre_url', None)
+                if not next:
+                   next = request.host_url
+                return redirect(next, code=307)
             else:
                 flash('unknow error')
                 return redirect(login_url, code=307) 
