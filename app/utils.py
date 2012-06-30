@@ -128,7 +128,7 @@ class MongoSession(MutableMapping, SessionMixin):
         storage = Storage.objects(session_id=self.sid).first()
 
         for key in storage.data.keys():
-            yield loads(str(key))
+            yield str(key)
 
     def __len__(self):
         storage = Storage.objects(session_id=self.sid).first()
