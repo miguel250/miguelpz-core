@@ -90,18 +90,18 @@ class MongoSession(MutableMapping, SessionMixin):
         self.sid = sid
         self.modified = False
         self.conn = None
-        storage = Storage.objects(session_id=sid)
-        if not storage:
+        self.storage = Storage.objects(session_id=sid).first()
+        if not self.storage:
             expires = datetime.utcnow() + app.permanent_session_lifetime
-            storage = Storage(session_id=sid, data={}, expires_on=expires)
-            storage.save()
+            self.storage = Storage(session_id=sid, data={}, expires_on=expires)
+            self.storage.save()
             self.new = True
 
     def __getitem__(self, key):
 
         rv = None
-        storage = Storage.objects(session_id=self.sid).first()
-
+        storage = self.storage
+        
         if key in storage.data:
             rv = storage.data[key]
 
@@ -112,27 +112,23 @@ class MongoSession(MutableMapping, SessionMixin):
 
     def __setitem__(self, key, value):
 
-        storage = Storage.objects(session_id=self.sid).first()
-        storage.data[key] = value
-        storage.save()
+        self.storage.data[key] = value
+        self.storage.save()
 
         self.modified = True
 
     def __delitem__(self, key):
-        
-        storage = Storage.objects(session_id=self.sid).first()
-        del  storage.data[key]
-        storage.save()
+
+        del  self.storage.data[key]
+        self.storage.save()
 
     def __iter__(self):
-        storage = Storage.objects(session_id=self.sid).first()
-
-        for key in storage.data.keys():
+        for key in self.storage.data.keys():
             yield str(key)
 
     def __len__(self):
-        storage = Storage.objects(session_id=self.sid).first()
-        return len(storage)
+        
+        return len(self.storage)
     
     class CallableAttributeProxy(object):
         def __init__(self, session, key, obj, attr):
