@@ -101,7 +101,7 @@ class MongoSession(MutableMapping, SessionMixin):
 
         rv = None
         storage = self.storage
-        
+
         if key in storage.data:
             rv = storage.data[key]
 
@@ -172,8 +172,7 @@ class MongoSessionInterface(SessionInterface):
     def save_session(self, app, session, response):
         domain = self.get_cookie_domain(app)
         if not session:
-            storage = Storage.objects(session_id=session.sid)
-            storage = storage[0]
+            storage = Storage.objects(session_id=session.sid).first()
             storage.delete()
             if session.modified:
                 response.delete_cookie(app.session_cookie_name,
