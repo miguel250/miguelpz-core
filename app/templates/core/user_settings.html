@@ -1,0 +1,23 @@
+ {% extends "base.html" %}
+ {% block title %}{{ settings['user'].name }}{% endblock %}
+ {% block content %}
+ {% from "helpers/form.html" import render_field %}
+
+<form method=post action="{{ url_for('.user_settings') }}">
+    {{ render_field(settings['form'].username) }}
+    {{ render_field(settings['form'].email) }}
+    {{ render_field(settings['form'].job) }}
+    {{ render_field(settings['form'].city) }}
+    {{ render_field(settings['form'].name) }}
+    {{ render_field(settings['form'].github) }}
+    {{ render_field(settings['form'].twitter) }}
+    {{ render_field(settings['form'].linkedin) }}
+    {{ render_field(settings['form'].facebook) }}
+    {{ render_field(settings['form'].googleplus) }}
+    {{ render_field(settings['form'].foursquare) }}
+    {{ render_field(settings['form'].personal_web) }}
+    {{ settings['form'].csrf_token }}
+    {{ settings['form'].submit }}
+</form>
+ 
+ {% endblock %}

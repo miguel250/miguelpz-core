@@ -2,9 +2,23 @@ from flask import Blueprint, Response, request, session, render_template, redire
 from app.utils import Github
 from app.utils import UserAuth
 from app.core.models import User
+from app.core.forms import UserSettingsForm
 
 main = Blueprint('core', __name__,template_folder='../templates')
 user_auth = UserAuth('core.login')
+
+@main.route('user/settings',methods=['GET', 'POST'])
+def user_settings():
+    user_id = session.get('user_id')
+    user = User.objects.get_or_404(id=user_id)
+
+    form = UserSettingsForm(request.form, obj=user)
+    
+    if request.method == 'POST' and form.validate():
+        form.populate_obj(user)
+        user.save()
+    settings = {'user': user, 'form': form}
+    return render_template('core/user_settings.html', settings=settings)
 
 @main.route('login/')
 def login():
