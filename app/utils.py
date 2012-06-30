@@ -125,7 +125,7 @@ class MongoSession(MutableMapping, SessionMixin):
         storage.save()
 
     def __iter__(self):
-        storage = Storage.objects(session_id=self.sid).find()
+        storage = Storage.objects(session_id=self.sid).first()
 
         for key in storage.data.keys():
             yield loads(str(key))
