@@ -1,6 +1,7 @@
 import urls
 from app.config import Settings
 from app.utils import MongoSessionInterface
+from flask_debugtoolbar import DebugToolbarExtension
 
 class Run(Settings):
     
@@ -14,6 +15,7 @@ class Run(Settings):
         return self.app
     
     def run(self):
+        DebugToolbarExtension(self.app)
         self.application()
         self.app.run(host='0.0.0.0', debug=True)
 

@@ -4,3 +4,4 @@ gevent==0.13.7
 gunicorn==0.14.3
 mock==0.8.0
 requests==0.13.1
+Flask-DebugToolbar==0.7.1
