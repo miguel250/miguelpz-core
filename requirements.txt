@@ -1,4 +1,4 @@
-Flask==0.8
+Flask==0.9
 flask-mongoengine==0.4
 gevent==0.13.7
 gunicorn==0.14.3
