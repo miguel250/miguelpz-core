@@ -3,9 +3,9 @@ from app.core.models import User
 
 main = Blueprint('api', __name__)
 
-@main.route('/me/<username_id>')
-def me(username_id):
-    user = User.objects.get_or_404(id=username_id)
+@main.route('/me/<username>')
+def me(username):
+    user = User.objects.get_or_404(username=username)
     message = {
         'status': 200,
          'info': {
@@ -25,6 +25,7 @@ def me(username_id):
         },
     }
     resp = jsonify(message)
+    resp.headers['Access-Control-Allow-Origin'] = 'http://me.frontend.dev/'
     resp.status_code = 200
     return resp
 

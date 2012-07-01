@@ -23,6 +23,7 @@ class ViewsTestCase(unittest.TestCase):
 			)
 		user = user.save()
 		self.id = user.id
+		self.username = user.username
 	
 	def tearDown(self):
 		User.drop_collection()
@@ -46,7 +47,7 @@ class ViewsTestCase(unittest.TestCase):
             	'personal_web': 'Test personal web'
         	},
     	}
-		rv = self.app.get('/api/me/%s'%self.id)
+		rv = self.app.get('/api/me/%s'%self.username)
 		data = json.loads(rv.data)
 		self.assertEquals(data, user)
 
