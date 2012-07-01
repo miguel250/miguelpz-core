@@ -27,6 +27,13 @@ class ViewsTestCase(unittest.TestCase):
         self.user = user
         self.id = user.id
 
+    def tearDown(self):
+        User.drop_collection()
+        
+    def testUserSettingAuth(self):
+        rv = self.app.get('/user/settings')
+        self.assertEquals(rv.status_code, 302)
+
     def testUserSettingsLoading(self):
         with app.test_client() as c:
             with c.session_transaction() as sess:

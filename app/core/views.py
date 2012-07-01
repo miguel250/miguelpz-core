@@ -8,6 +8,7 @@ main = Blueprint('core', __name__,template_folder='../templates')
 user_auth = UserAuth('core.login')
 
 @main.route('user/settings',methods=['GET', 'POST'])
+@user_auth.login_required
 def user_settings():
     user_id = session.get('user_id')
     user = User.objects.get_or_404(id=user_id)
