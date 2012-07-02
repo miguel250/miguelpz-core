@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from datetime import timedelta
+from flaskext.mail import Mail
 from flask.ext.mongoengine import MongoEngine
 
 
@@ -11,6 +12,7 @@ class Settings(object):
         path = os.path.join("../../config/base.cfg")
         app.config.from_pyfile(path)
         self.app = app
+        self.environment()
     
     def environment(self):
         try:
@@ -28,14 +30,16 @@ class Settings(object):
         except KeyError:
             pass
 
+    def App(self):
+        return self.app
     def config(self):
         return self.app.config
 
     def db(self):
-        self.environment()
         db = MongoEngine(self.app)
         return db
 
 settings = Settings()
 db = settings.db()
 config = settings.config()
+mail = Mail(settings.App())
